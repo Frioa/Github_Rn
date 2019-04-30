@@ -117,6 +117,7 @@ class TabBarComponent extends React.Component{
                 this.theme = theme  // 改变主题
             }
         }
+        // BottomTabBar 用于显示底部自定义Tab
         return <BottomTabBar
             {...this.props} // 上个页面的属性传递过来
             activeTintColor = {this.theme.tintColor || this.props.activeTintColor}
