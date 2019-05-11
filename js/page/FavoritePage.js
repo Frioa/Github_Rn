@@ -1,5 +1,7 @@
 import React, {Component} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
+import actions from "../action";
+import {connect} from "react-redux";
 
 
 type Props = {};
@@ -39,3 +41,11 @@ const styles = StyleSheet.create({
   },
 
 });
+/*
+const mapStateToProps = state =>({
+
+});
+const mapDispatchToProps=dispatch=>({
+    onThemeChange: theme=>dispatch(actions.onThemeChange(theme))
+});
+export default connect(mapStateToProps, mapDispatchToProps)(FavoritePage);*/

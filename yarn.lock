@@ -607,7 +607,7 @@
     pirates "^4.0.0"
     source-map-support "^0.5.9"
 
-"@babel/runtime@^7.0.0", "@babel/runtime@^7.4.4":
+"@babel/runtime@^7.0.0", "@babel/runtime@^7.4.3", "@babel/runtime@^7.4.4":
   version "7.4.4"
   resolved "https://registry.npm.taobao.org/@babel/runtime/download/@babel/runtime-7.4.4.tgz#dc2e34982eb236803aa27a07fea6857af1b9171d"
   integrity sha1-3C40mC6yNoA6onoH/qaFevG5Fx0=
@@ -3684,7 +3684,7 @@ lodash.throttle@^4.1.1:
   resolved "https://registry.npm.taobao.org/lodash.throttle/download/lodash.throttle-4.1.1.tgz#c23e91b710242ac70c37f1e1cda9274cc39bf2f4"
   integrity sha1-wj6RtxAkKscMN/HhzaknTMOb8vQ=
 
-lodash@^4.0.0, lodash@^4.17.11, lodash@^4.17.5, lodash@^4.3.0, lodash@^4.6.1:
+lodash@^4.0.0, lodash@^4.17.11, lodash@^4.17.5, lodash@^4.2.0, lodash@^4.3.0, lodash@^4.6.1:
   version "4.17.11"
   resolved "https://registry.npm.taobao.org/lodash/download/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha1-s56mIp72B+zYniyN8SU2iRysm40=
@@ -4850,7 +4850,7 @@ prompts@^2.0.1:
     kleur "^3.0.2"
     sisteransi "^1.0.0"
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.5.10, prop-types@^15.5.7, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.npm.taobao.org/prop-types/download/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha1-UsQedbjIfnK52TYOAga5ncv/psU=
@@ -5063,6 +5063,13 @@ react-navigation-drawer@1.2.1:
   dependencies:
     react-native-tab-view "^1.2.0"
 
+react-navigation-redux-helpers@^3.0.2:
+  version "3.0.2"
+  resolved "https://registry.npm.taobao.org/react-navigation-redux-helpers/download/react-navigation-redux-helpers-3.0.2.tgz#612e1d5b1378ba0c17b6a2d8ec9a01cc698a3a16"
+  integrity sha1-YS4dWxN4ugwXtqLY7JoBzGmKOhY=
+  dependencies:
+    invariant "^2.2.2"
+
 react-navigation-stack@1.3.0:
   version "1.3.0"
   resolved "https://registry.npm.taobao.org/react-navigation-stack/download/react-navigation-stack-1.3.0.tgz#34bbddb068c094c9ab843e36059b9fd92b728250"
@@ -5105,6 +5112,18 @@ react-proxy@^1.1.7:
   dependencies:
     lodash "^4.6.1"
     react-deep-force-update "^1.0.0"
+
+react-redux@^7.0.3:
+  version "7.0.3"
+  resolved "https://registry.npm.taobao.org/react-redux/download/react-redux-7.0.3.tgz#983c5a6de81cb1e696bd1c090ba826545f9170f1"
+  integrity sha1-mDxabegcseaWvRwJC6gmVF+RcPE=
+  dependencies:
+    "@babel/runtime" "^7.4.3"
+    hoist-non-react-statics "^3.3.0"
+    invariant "^2.2.4"
+    loose-envify "^1.4.0"
+    prop-types "^15.7.2"
+    react-is "^16.8.6"
 
 react-test-renderer@16.8.3:
   version "16.8.3"
@@ -5187,6 +5206,31 @@ realpath-native@^1.1.0:
   integrity sha1-IAMpT+oj+wZy8kduviL89Jii1lw=
   dependencies:
     util.promisify "^1.0.0"
+
+redux-devtools-instrument@^1.9.0:
+  version "1.9.6"
+  resolved "https://registry.npm.taobao.org/redux-devtools-instrument/download/redux-devtools-instrument-1.9.6.tgz#6b412595f74b9d48cfd4ecc13e585b1588ed6e7e"
+  integrity sha1-a0EllfdLnUjP1OzBPlhbFYjtbn4=
+  dependencies:
+    lodash "^4.2.0"
+    symbol-observable "^1.0.2"
+
+redux-devtools@^3.5.0:
+  version "3.5.0"
+  resolved "https://registry.npm.taobao.org/redux-devtools/download/redux-devtools-3.5.0.tgz#d69ab76d4f0f8abdf6d24bcf5954d7a1aa2b6827"
+  integrity sha1-1pq3bU8Pir320kvPWVTXoaoraCc=
+  dependencies:
+    lodash "^4.2.0"
+    prop-types "^15.5.7"
+    redux-devtools-instrument "^1.9.0"
+
+redux@^4.0.1:
+  version "4.0.1"
+  resolved "https://registry.npm.taobao.org/redux/download/redux-4.0.1.tgz#436cae6cc40fbe4727689d7c8fae44808f1bfef5"
+  integrity sha1-Q2yubMQPvkcnaJ18j65EgI8b/vU=
+  dependencies:
+    loose-envify "^1.4.0"
+    symbol-observable "^1.2.0"
 
 regenerate-unicode-properties@^8.0.2:
   version "8.0.2"
@@ -5880,6 +5924,11 @@ supports-color@^6.0.0, supports-color@^6.1.0:
   integrity sha1-B2Srxpxj1ayELdSGfo0CXogN+PM=
   dependencies:
     has-flag "^3.0.0"
+
+symbol-observable@^1.0.2, symbol-observable@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.npm.taobao.org/symbol-observable/download/symbol-observable-1.2.0.tgz#c22688aed4eab3cdc2dfeacbb561660560a00804"
+  integrity sha1-wiaIrtTqs83C3+rLtWFmBWCgCAQ=
 
 symbol-tree@^3.2.2:
   version "3.2.2"
