@@ -98,7 +98,7 @@ class DynamicTabNavigator extends Component<Props> {
     }
     render() {
         // 保存外部 navigation , 可以使用外部的跳转
-        NavigationUtil.navigation = this.props.navigation;
+        // NavigationUtil.navigation = this.props.navigation;
         const Tab = this._tabNavigator();
         return <Tab/>
     }
@@ -112,14 +112,6 @@ class TabBarComponent extends React.Component{
         }
     }
     render() {
-      /*  const {routes, index} = this.props.navigation.state; // 获取主题属性
-        if (routes[index].params){
-            const {theme} = routes[index].params;
-            // 以最新的更新时间为主，防止其他tab之前的修改被覆盖
-            if (theme && theme.updateTime > this.theme.updateTime) { // 判断时间
-                this.theme = theme  // 改变主题
-            }
-        }*/
         // BottomTabBar 用于显示底部自定义Tab
         return <BottomTabBar
             {...this.props} // 上个页面的属性传递过来

@@ -1,42 +1,42 @@
 import React, {Component} from 'react';
-import {
-    createAppContainer,
-    createBottomTabNavigator,
-} from "react-navigation"
-import {Platform, StyleSheet, Text, View} from 'react-native';
-
-
+import {Platform, StyleSheet, BackHandler, View} from 'react-native';
 type Props = {};
-import PopularPage from './PopularPage'
-import TrendingPage from './TrendingPage'
-import FavoritePage from './FavoritePage'
-import MyPage from './MyPage'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import Entypo from 'react-native-vector-icons/Entypo'
 import NavigationUtil from "../navigator/NavigationUtil";
 import DynamicTabNavigator from "../navigator/DynamicTabNavigator";
+import {NavigationActions} from "react-navigation"
+import {connect} from "react-redux";
 
-export default class HomePage extends Component<Props> {
-
+class HomePage extends Component<Props> {
+    componentDidMount(): void {
+        BackHandler.addEventListener("hardwareBackPress", this.onBackPress)
+    }
+    componentWillUnmount(): void {
+        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress)
+    }
+    /**
+     *  处理Android中物理返回
+     * @returns {*}
+     */
+    onBackPress = () => {
+        const {dispatch, nav} = this.props;
+        if (nav.routes[1].index === 0) {// 如果RootNavigator中MainNavigator的路由index为1，则不处理返回事件
+                                // ====0 路由导航器没有页面
+            return false;
+        }
+        dispatch(NavigationActions.back()); // 返回上一层
+        return true;
+    };
     render() {
          // 保存外部 navigation , 可以使用外部的跳转
+        // NavigationUtil.navigation = this.props.navigation;
         NavigationUtil.navigation = this.props.navigation;
         return <DynamicTabNavigator/>
     }
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-    },
-
+const mapStateToProps = state =>({
+    nav:state.nav,
+    theme:state.theme
 });
+
+export default connect(mapStateToProps)(HomePage);
