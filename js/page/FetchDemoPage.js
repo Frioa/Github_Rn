@@ -1,8 +1,5 @@
 import React, {Component} from 'react';
 import {Button, StyleSheet, Text, View, TextInput} from 'react-native';
-import actions from "../action";
-import {connect} from "react-redux";
-
 
 type Props = {};
 
@@ -34,17 +31,17 @@ export default class FetchDemoPage extends Component<Props> {
         let url = 'https://api.github.com/search/repositories?q=' + this.searchKey;
         fetch(url)
             .then(response => {
-                    if (response.ok){
-                        return response.text()
-                    }
-                    throw new Error('NetWork response was not ok')
+                if (response.ok) {
+                    return response.text()
+                }
+                throw new Error('NetWork response was not ok')
             })
             .then(responseText => {
                 this.setState({
                     showText: responseText
                 })
             })
-            .catch(e=>{
+            .catch(e => {
                 this.setState({
                     showText: e.toString()
                 })
@@ -95,7 +92,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         marginRight: 10,
     },
-    input_container:{
+    input_container: {
         flexDirection: 'row',
         alignItems: 'center'
     }
