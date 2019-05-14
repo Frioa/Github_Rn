@@ -6,8 +6,9 @@ import {createStackNavigator,
 import WelcomePage from '../page/WelcomePage'
 import HomePage from '../page/HomePage'
 import DetailPage from '../page/DetailPage'
+import FetchDemoPage from '../page/FetchDemoPage'
 import {connect} from 'react-redux'
-    import {createReactNavigationReduxMiddleware, createReduxContainer}from 'react-navigation-redux-helpers'
+import {createReactNavigationReduxMiddleware, createReduxContainer}from 'react-navigation-redux-helpers'
 
 export const rootCom = 'Init'; // 设置根路由
 
@@ -32,7 +33,13 @@ const MainNavigator = createStackNavigator({
         navigationOptions: {
           //  header: null // 可以通过将 header 设置为 null 来禁用StackNavigator 的 Navigation Bar
         }
-    }
+    },
+    FetchDemoPage: {
+        screen: FetchDemoPage,
+        navigationOptions: {
+            //  header: null // 可以通过将 header 设置为 null 来禁用StackNavigator 的 Navigation Bar
+        }
+    },
 });
 
 export const RootNavigator = createAppContainer(createSwitchNavigator({
