@@ -7,6 +7,7 @@ import {
     createAppContainer
 } from "react-navigation"
 import NavigationUtil from "../navigator/NavigationUtil";
+import PopularItem from '../common/PopularItem'
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
@@ -72,11 +73,11 @@ class PopularTab extends Component<Props> {
     }
     renderItem(data){
         const item = data.item;
-        return <View style={{marginBottom: 10}}>
-            <Text style={{backgroundColor: '#faa'}}>
-                {JSON.stringify(item)}
-            </Text>
-        </View>
+        return <PopularItem
+                item={item}
+                onSelect={()=>{
+                }}
+        />
     }
     render() {
         const {popular} = this.props;
@@ -122,25 +123,25 @@ const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
     },
     tabStyle: {
-        minWidth: 35
+         minWidth: 50 //fix minWidth会导致tabStyle初次加载时闪烁
+        //padding: 0
     },
     indicatorStyle: {
         height: 2,
-        backgroundColor: 'white',
+        backgroundColor: 'white'
     },
     labelStyle: {
         fontSize: 13,
         marginTop: 6,
-        marginBottom: 6
+        marginBottom: 6,
+    },
+    indicatorContainer: {
+        alignItems: "center"
+    },
+    indicator: {
+        color: 'red',
+        margin: 10
     }
 });

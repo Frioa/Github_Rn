@@ -25,7 +25,7 @@ export default function onAction(state = defaultState, action) {
             return {
                 ...state, // 复制一份
                 [action.storeName]: {
-                    ...[action.storeName],
+                    ...state[action.storeName],// ...state 解决刷新空白的问题
                     items: action.items,
                     isLoading: false,
                 }
@@ -34,7 +34,7 @@ export default function onAction(state = defaultState, action) {
             return {
                 ...state, // 复制一份
                 [action.storeName]: {
-                    ...[action.storeName],
+                    ...state[action.storeName],
                     isLoading: true,
                 }
             };
@@ -42,7 +42,7 @@ export default function onAction(state = defaultState, action) {
             return {
                 ...state, // 复制一份
                 [action.storeName]: {
-                    ...[action.storeName],
+                    ...state[action.storeName],
                     isLoading: false,
                 }
             };
