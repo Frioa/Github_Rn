@@ -12,12 +12,13 @@ const logger = store =>next=>action=>{
     }
     const result = next(action);
     console.log('nextState', store.getState());
+    return result
 };
 
 const middlewares  = [
     middleware,
     logger,
-    thunk,
+    thunk,// 配置异步action
 ];
 
 /**

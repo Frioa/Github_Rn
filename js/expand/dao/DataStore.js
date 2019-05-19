@@ -70,9 +70,7 @@ export default class DateStore {
         return new Promise((resolve, reject) => {
             fetch(url)
                 .then((response) => {
-                    alert(response.ok);
                     if (response.ok) {
-
                         return response.json();// 获取response中json数据
                     }
                     throw new Error('Network response was no ok')
