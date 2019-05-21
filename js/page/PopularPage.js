@@ -170,7 +170,7 @@ class PopularTab extends Component<Props> {
 }
 
 const mapStateToProps = state => ({
-    popular: state.popular
+    popular: state.popular // props1. 订阅的state树要少，否则影响性能，因为多次调用render方法
 });
 // dispatch 创建函数
 const mapDispatchToProps = dispatch => ({
@@ -178,7 +178,7 @@ const mapDispatchToProps = dispatch => ({
     onLoadMorePopular: (storeName, url, pageSize, items, callBack) => dispatch(actions.onLoadMorePopular(storeName, url, pageSize, items, callBack)),
 
 });
-
+// 注意：connect只是一个function，并不一定要放在export后面
 const PopularTabPage = connect(mapStateToProps, mapDispatchToProps)(PopularTab);
 
 const styles = StyleSheet.create({
