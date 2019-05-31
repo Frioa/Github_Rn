@@ -67,7 +67,7 @@ export default class TrendingPage extends Component<Props> {
         this.setState({
             timeSpan: tab
         });
-        // 发送一个事件，类型，参数
+        // 发送一个事件DeviceEventEmitter，类型，参数
         DeviceEventEmitter.emit(EVENT_TYPE_TIME_SPAN_CHANGE, tab);
     }
     renderTrendingDialog() {
@@ -126,7 +126,7 @@ class TrendingTab extends Component<Props> {
 
     componentDidMount(): void {
         this.loadData(false);
-        // 添加
+        // 添加 DeviceEventEmitter
         this.timeSpanChangeListener = DeviceEventEmitter.addListener(EVENT_TYPE_TIME_SPAN_CHANGE, (timeSpan)=> {
             this.timeSpan = timeSpan;
             this.loadData();
