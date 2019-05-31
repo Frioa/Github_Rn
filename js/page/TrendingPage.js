@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList, DeviceInfo, StyleSheet, ActivityIndicator, View, RefreshControl, Text} from 'react-native';
+import {FlatList, DeviceEventEmitter,DeviceInfo, StyleSheet, ActivityIndicator, View, RefreshControl, Text, TouchableOpacity} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../action/index'
 import {
@@ -11,8 +11,10 @@ import TrendingItem from '../common/TrendingItem'
 import Toast from 'react-native-easy-toast'
 import NavigationBar from '../common/NavigationBar'
 
-
+const EVENT_TYPE_TIME_SPAN_CHANGE = "EVENT_TYPE_TIME_SPAN_CHANGE";
 const URL = 'https://github.com/trending/';
+import TrendingDialog, {TimeSpans} from '../common/TrendingDialog'
+import MaterialIcons from "react-native-vector-icons/MaterialIcons";
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
 
@@ -22,13 +24,16 @@ export default class TrendingPage extends Component<Props> {
         super(props);
         console.log(NavigationUtil.navigation);
         this.tabNames = ['All', 'C', 'C#', 'PHP', 'Kotlin', 'JavaScript'];
+        this.state = {
+            timeSpan: TimeSpans[0]
+        }
     }
 
     _genTabs() {
         const tabs = {};
         this.tabNames.forEach((item, index) => {
             tabs['tab' + index] = {
-                screen: props => <TrendingTabPage {...props} tabLabel={item}/>, // 点击Tab，传递属性（路由传递参数）
+                screen: props => <TrendingTabPage {...props}  timeSpan = {this.state.timeSpan} tabLabel={item}/>, // 点击Tab，传递属性（路由传递参数）
                 navigationOptions: {
                     title: item
                 }
@@ -36,37 +41,77 @@ export default class TrendingPage extends Component<Props> {
         });
         return tabs
     }
-
+    renderTitleView() {
+        return <View>
+            <TouchableOpacity
+                ref = 'button'
+                underlayColor = 'transparent'
+                onPress={()=>this.dialog.show()}>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Text style = {{
+                        fontSize: 18,
+                        color: '#FFFFFF',
+                        fontWeight: '400'
+                    }}>趋势 {this.state.timeSpan.showText}</Text>
+                    <MaterialIcons
+                        name = {'arrow-drop-down'}
+                        size = {22}
+                        style = {{color : 'white'}}
+                    />
+                </View>
+            </TouchableOpacity>
+        </View>
+    }
+    onSelectTimeSpan(tab) {
+        this.dialog.dismiss();
+        this.setState({
+            timeSpan: tab
+        });
+        // 发送一个事件，类型，参数
+        DeviceEventEmitter.emit(EVENT_TYPE_TIME_SPAN_CHANGE, tab);
+    }
+    renderTrendingDialog() {
+        return <TrendingDialog
+            ref = {dialog=>this.dialog = dialog}
+            onSelect = {tab => this.onSelectTimeSpan(tab)}
+        />
+    }
+    _tabNav() {
+        if (!this.tabNav)  { // 优化：如果TopNavigator创建好了不用创建了
+            this.tabNav = createAppContainer(createMaterialTopTabNavigator(
+                this._genTabs(), {
+                    tabBarOptions: {
+                        tabStyle: styles.tabStyle,
+                        upperCaseLabel: false, // 是否标签大写，默认 true
+                        scrollEnabled: true, // 是否支持滚动， 默认false
+                        style: {
+                            backgroundColor: '#678', // TabBar 的背景色
+                            height: 30, // fix 开启scrollEnabled 后再Android上初次加载闪烁问题
+                        },
+                        indicatorStyle: styles.indicatorStyle, // 指示器属性
+                        labelStyle: styles.labelStyle, // 文字属性
+                    }
+                }
+            ));
+        }
+        return this.tabNav;
+    }
     render() {
         let statusBar = {
             backgroundColor: THEME_COLOR,
             barStyle: 'light=content',
         };
         let navigationBar = <NavigationBar
-            title={'趋势'}
+            titleView={this.renderTitleView()}
             statusBar={statusBar}
             style={{backgroundColor: THEME_COLOR}}
         />;
-        const TabNavigator = createAppContainer(createMaterialTopTabNavigator(
-            this._genTabs(), {
-                tabBarOptions: {
-                    tabStyle: styles.tabStyle,
-                    upperCaseLabel: false, // 是否标签大写，默认 true
-                    scrollEnabled: true, // 是否支持滚动， 默认false
-                    style: {
-                        backgroundColor: '#678', // TabBar 的背景色
-                        height: 30, // fix 开启scrollEnabled 后再Android上初次加载闪烁问题
-                    },
-                    indicatorStyle: styles.indicatorStyle, // 指示器属性
-                    labelStyle: styles.labelStyle, // 文字属性
-                }
-            }
-        ));
+        const TabNavigator = this._tabNav();
         return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0}}>
             {navigationBar}
             <TabNavigator/>
+            {this.renderTrendingDialog()}
         </View>
-
     }
 }
 
@@ -74,12 +119,24 @@ const pageSize = 10; // 设置常量防止修改
 class TrendingTab extends Component<Props> {
     constructor(props) {
         super(props);
-        const {tabLabel} = this.props;
+        const {tabLabel, timeSpan} = this.props;
         this.storeName = tabLabel;
+        this.timeSpan = timeSpan
     }
 
     componentDidMount(): void {
         this.loadData(false);
+        // 添加
+        this.timeSpanChangeListener = DeviceEventEmitter.addListener(EVENT_TYPE_TIME_SPAN_CHANGE, (timeSpan)=> {
+            this.timeSpan = timeSpan;
+            this.loadData();
+        })
+    }
+    componentWillUnmount(): void {
+        // 移除
+        if (this.timeSpanChangeListener) {
+            this.timeSpanChangeListener.remove();
+        }
     }
 
     loadData(loadMore) {
@@ -117,7 +174,7 @@ class TrendingTab extends Component<Props> {
     }
 
     genFetchUrl(key) {
-        return URL + key + '?since=daily'
+        return URL + key + '?' +this.timeSpan.searchText
     }
 
     renderItem(data) {

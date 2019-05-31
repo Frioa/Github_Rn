@@ -2,11 +2,10 @@ import React, {Component} from 'react'
 import {Modal, Text, TouchableOpacity, StyleSheet, View, Platform, DeviceInfo} from 'react-native'
 import {PropTypes} from 'prop-types';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import TimeSpans from '../model/TimeSpans'
+import TimeSpan from '../model/TimeSpans'
 
-export const TimeSpans = [new TimeSpans('今 天', 'since=daily')
-    , new TimeSpans('本 周', 'since=weekly')
-    , new TimeSpans('本 月', 'since=monthly')];
+export const TimeSpans = [new TimeSpan('今 天', 'since=daily'),
+    new TimeSpan('本 周', 'since=weekly'), new TimeSpan('本 月', 'since=monthly')];
 export default class TrendingDialog extends Component {
     state = {
         visible: false,
@@ -18,7 +17,7 @@ export default class TrendingDialog extends Component {
         })
     }
 
-    dimiss() {
+    dismiss() {
         this.setState({
             visible: false
         })
@@ -47,16 +46,17 @@ export default class TrendingDialog extends Component {
                             return <TouchableOpacity
                                 onPress={() => onSelect(arr[i])}
                                 underlayColor='transparent'>
-                                <View style={style.text_container}>
+                                <View style={styles.text_container}>
                                     <Text
                                         style={styles.text}
                                     >{arr[i].showText}</Text>
-                                    {
-                                        i !== TimeSpans.length - 1 ? <View
-                                            style={styles.line}
-                                        /> : null
-                                    }
                                 </View>
+                                {/*分割线*/}
+                                {
+                                    i !== TimeSpans.length - 1 ? <View
+                                        style={styles.line}
+                                    /> : null
+                                }
                             </TouchableOpacity>
                         })}
                     </View>
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.6)', // 透明度
         flex: 1,
         alignItems: 'center',
+        paddingTop: DeviceInfo.isIPoneX_deprecated ? 30: 0
     },
     arrow: {
         marginTop: 40,
