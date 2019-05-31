@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {FlatList,DeviceInfo , StyleSheet, ActivityIndicator, View, RefreshControl, Text} from 'react-native';
+import {FlatList, DeviceInfo, StyleSheet, ActivityIndicator, View, RefreshControl, Text} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../action/index'
 import {
@@ -38,7 +38,7 @@ export default class TrendingPage extends Component<Props> {
     }
 
     render() {
-        let statusBar={
+        let statusBar = {
             backgroundColor: THEME_COLOR,
             barStyle: 'light=content',
         };
@@ -62,7 +62,7 @@ export default class TrendingPage extends Component<Props> {
                 }
             }
         ));
-        return <View style={{flex: 1,marginTop: DeviceInfo.isIPhoneX_deprecated? 30  : 0}}>
+        return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0}}>
             {navigationBar}
             <TabNavigator/>
         </View>
@@ -161,12 +161,12 @@ class TrendingTab extends Component<Props> {
                     ListFooterComponent={() => this.genIndicator()}
                     onEndReached={() => {
                         console.log('---onEndReached---');
-                        setTimeout(()=>{ // 优化：抱着这个方法在onEndReachedThreshold之后执行
+                        setTimeout(() => { // 优化：抱着这个方法在onEndReachedThreshold之后执行
                             if (this.canLoadMore) { // 优化：解决多次调用问题
                                 this.loadData(true);
                                 this.canLoadMore = false
                             }
-                        },100);
+                        }, 100);
 
                     }}
                     onEndReachedThreshold={0.5} // 一个比值
