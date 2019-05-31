@@ -8,16 +8,15 @@ import {handleData} from '../ActionUtil'
  * @param pageSize 每一页显示多少Item
  * @returns {{theme: *, type: string}}
  */
-export function onLoadPopularData(storeName, url, pageSize) {
+export function onLoadTrendingData(storeName, url, pageSize) {
     // 异步action
     return dispatch => {
 
-        dispatch({type: Types.POPULAR_REFRESH, storeName: storeName});
+        dispatch({type: Types.TRENDING_REFRESH, storeName: storeName});
         let dataStore = new DataStore();// 通过离线缓存框架获取数据流
-
-        dataStore.fetchData(url, FLAG_STORAGE.flag_popular) // 异步action与数据流
+        dataStore.fetchData(url, FLAG_STORAGE.flag_trending) // 异步action与数据流
             .then(data => {
-                handleData(Types.POPULAR_REFRESH_SUCCESS,dispatch, storeName, data, pageSize)
+                handleData(Types.TRENDING_REFRESH_SUCCESS, dispatch, storeName, data, pageSize)
             })
             .catch(error => {
                 console.log(error);
@@ -38,7 +37,7 @@ export function onLoadPopularData(storeName, url, pageSize) {
  * @param dataArray 原始数据
  * @param callBack 回调函数，可以通过回调函数来向页面通信：比如异常信息展示，没有更多等待
  */
-export function onLoadMorePopular(storeName, pageIndex, pageSize, dataArray = [], callBack) {
+export function onLoadMoreTrending(storeName, pageIndex, pageSize, dataArray = [], callBack) {
     return dispatch => {
         setTimeout(() => { // 模拟网络请求
             if ((pageIndex - 1) * pageSize >= dataArray.length) { // 已加载完全部数据
@@ -46,7 +45,7 @@ export function onLoadMorePopular(storeName, pageIndex, pageSize, dataArray = []
                     callBack('no more')
                 }
                 dispatch({
-                    type: Types.POPULAR_LOAD_MORE_FAIL,
+                    type: Types.TRENDING_LOAD_MORE_FAIL,
                     error: 'no more',
                     storeName: storeName,
                     pageIndex: --pageIndex, // pageIndex 是请求第几页的数据，没有数据- 1
@@ -56,7 +55,7 @@ export function onLoadMorePopular(storeName, pageIndex, pageSize, dataArray = []
                 // 本次载入最大数量
                 let max = pageSize * pageIndex > dataArray.length ? dataArray.length : pageSize * pageIndex;// 计算请求后的页面数量
                 dispatch({
-                    type: Types.POPULAR_LOAD_MORE_SUCCESS,
+                    type: Types.TRENDING_LOAD_MORE_SUCCESS,
                     storeName,
                     pageIndex,
                     projectModes: dataArray.slice(0, max) // 返回一个子数组 [0,max]
@@ -65,3 +64,4 @@ export function onLoadMorePopular(storeName, pageIndex, pageSize, dataArray = []
         }, 100)
     }
 }
+

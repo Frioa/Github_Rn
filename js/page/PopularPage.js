@@ -9,9 +9,12 @@ import {
 import NavigationUtil from "../navigator/NavigationUtil";
 import PopularItem from '../common/PopularItem'
 import Toast from 'react-native-easy-toast'
+import NavigationBar from '../common/NavigationBar'
+import {DeviceInfo} from 'react-native'
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
+const THEME_COLOR = '#678';
 
 type Props = {};
 export default class PopularPage extends Component<Props> {
@@ -35,6 +38,15 @@ export default class PopularPage extends Component<Props> {
     }
 
     render() {
+        let statusBar={
+            backgroundColor: THEME_COLOR,
+            barStyle: 'light-content',
+        };
+        let navigationBar = <NavigationBar
+            title={'最热'}
+            statusBar={statusBar}
+            style={{backgroundColor: THEME_COLOR}}
+        />;
         const TabNavigator = createAppContainer(createMaterialTopTabNavigator(
             this._genTabs(), {
                 tabBarOptions: {
@@ -43,13 +55,18 @@ export default class PopularPage extends Component<Props> {
                     scrollEnabled: true, // 是否支持滚动， 默认false
                     style: {
                         backgroundColor: '#678', // TabBar 的背景色
+                        height: 30, // fix 开启scrollEnabled 后再Android上初次加载闪烁问题
                     },
                     indicatorStyle: styles.indicatorStyle, // 指示器属性
                     labelStyle: styles.labelStyle, // 文字属性
                 }
             }
         ));
-        return <TabNavigator/>
+        return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated? 30  : 0}}>
+                {navigationBar}
+                <TabNavigator/>
+        </View>
+
     }
 }
 
@@ -185,8 +202,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     tabStyle: {
-        minWidth: 50 //fix minWidth会导致tabStyle初次加载时闪烁
-        //padding: 0
+       //  minWidth: 50 //fix minWidth会导致tabStyle初次加载时闪烁
+        padding: 0
     },
     indicatorStyle: {
         height: 2,
@@ -194,8 +211,9 @@ const styles = StyleSheet.create({
     },
     labelStyle: {
         fontSize: 13,
-        marginTop: 6,
-        marginBottom: 6,
+    /*    marginTop: 6,
+        marginBottom: 6,*/
+        margin: 0,
     },
     indicatorContainer: {
         alignItems: "center"

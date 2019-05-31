@@ -3,7 +3,7 @@ import {
     createAppContainer,
     createBottomTabNavigator,
 } from "react-navigation"
-import {Platform, StyleSheet, Text, View} from 'react-native';
+import {DeviceInfo, StyleSheet, Text, View} from 'react-native';
 import {connect} from 'react-redux'
 
 type Props = {};
@@ -16,6 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import Entypo from 'react-native-vector-icons/Entypo'
 import NavigationUtil from "../navigator/NavigationUtil";
 import {BottomTabBar} from 'react-navigation-tabs';
+
 
 const TABS = { // 这里配置页面路由
     PopularPage: {
