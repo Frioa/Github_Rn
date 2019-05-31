@@ -11,6 +11,7 @@ import TrendingItem from '../common/TrendingItem'
 import Toast from 'react-native-easy-toast'
 import NavigationBar from '../common/NavigationBar'
 
+
 const URL = 'https://github.com/trending/';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
