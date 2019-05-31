@@ -5,13 +5,20 @@ import NavigationUtil from "../navigator/NavigationUtil";
 import DynamicTabNavigator from "../navigator/DynamicTabNavigator";
 import {NavigationActions} from "react-navigation"
 import {connect} from "react-redux";
+import BackPressComponent from '../common/BackPressComponent'
 
 class HomePage extends Component<Props> {
+    constructor(props) {
+        super(props);
+        this.backPress = new BackPressComponent({backPress: this.onBackPress()})
+    }
+
+
     componentDidMount(): void {
-        BackHandler.addEventListener("hardwareBackPress", this.onBackPress)
+        this.backPress.componentDidMount()
     }
     componentWillUnmount(): void {
-        BackHandler.removeEventListener("hardwareBackPress", this.onBackPress)
+        this.backPress.componentWillUnmount()
     }
     /**
      *  处理Android中物理返回

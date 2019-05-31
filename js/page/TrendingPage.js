@@ -179,9 +179,15 @@ class TrendingTab extends Component<Props> {
 
     renderItem(data) {
         const item = data.item;
+
+        const url = "https://github.com/" + item.fullName;
+
         return <TrendingItem
             item={item}
             onSelect={() => {
+                NavigationUtil.goPage({
+                    projectModels: item,
+                }, 'DetailPage')
             }}
         />
     }
