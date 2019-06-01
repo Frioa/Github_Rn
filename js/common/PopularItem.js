@@ -6,26 +6,16 @@ import {TouchableOpacity,
     StyleSheet
 } from 'react-native'
 import FontAwesome from 'react-native-vector-icons/FontAwesome'
-export default class PopularItem extends Component {
+import BaseItem from "./BaseItem";
+export default class PopularItem extends BaseItem {
     render() {
-        const {item} = this.props;
+        const {projectModel} = this.props;
+        const {item} = projectModel;
         if (!item || !item.owner) return null;
-        let favoriteButton =
-            <TouchableOpacity
-                style={{padding: 6}} // 增加点击区域
-                onPress={()=>{
-                }}
-                underlayColor={'transparent'}
-            >
-                <FontAwesome
-                    name={'star-o'}
-                    size={26}
-                    style={{color: 'red'}}
-                />
-            </TouchableOpacity>;
+
         return (
             <TouchableOpacity
-                onPress={this.props.onSelect}
+                onPress={()=> this.onItemClick()}
             >
                     <View style={styles.cell_container}>
                         <Text style={styles.title}>
@@ -45,7 +35,7 @@ export default class PopularItem extends Component {
                                 <Text>Start:</Text>
                                 <Text>{item.stargazers_count}</Text>
                             </View>
-                            {favoriteButton}
+                            {this._favoriteIcon()}
                         </View>
                     </View>
             </TouchableOpacity>

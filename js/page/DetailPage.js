@@ -5,6 +5,7 @@ import ViewUtil from "../util/ViewUtil";
 import FontAwesome from "react-native-vector-icons/FontAwesome";
 import NavigationUtil from "../navigator/NavigationUtil";
 import BackPressComponent from "../common/BackPressComponent";
+import FavoriteDao from "../expand/dao/FavoriteDao";
 
 const TRENDING_URL = 'https://github.com/';
 type Props = {};
@@ -13,14 +14,15 @@ export default class DetailPage extends Component<Props> {
     constructor(props) {
         super(props);
         this.params = this.props.navigation.state.params;
-        const {projectModels} = this.params;
-
-        this.url = projectModels.html_url || TRENDING_URL + projectModels.fullName;
-        const title = projectModels.full_name || projectModels.fullName;
+        const {projectModels, flag} = this.params;
+        this.favoriteDao = new FavoriteDao(flag);
+        this.url = projectModels.item.html_url || TRENDING_URL + projectModels.item.fullName;
+        const title = projectModels.item.full_name || projectModels.item.fullName;
         this.state = {
             title: title,
             url: this.url,
             canGoBack: false, // 返回上一级
+            isFavorite: projectModels.isFavorite,
         };
         this.backPress = new BackPressComponent({backPress: () => this.onBackPress()})
     }
@@ -41,15 +43,27 @@ export default class DetailPage extends Component<Props> {
             NavigationUtil.goBack(this.props.navigation) // 程序上一层
         }
     }
+    onFavoriteButtonClick() {
+        const {projectModels, callback} = this.params;
+        const isFavorite = projectModels.isFavorite = !projectModels.isFavorite;
+        callback(isFavorite);// 回调
+        this.setState({
+            isFavorite: isFavorite
+        });
+        let key = projectModels.item.fullName ? projectModels.item.fullName: projectModels.item.id.toString()
+        if (projectModels.isFavorite) {// 收藏
+            this.favoriteDao.saveFavoriteItem(key, JSON.stringify(projectModels.item))
+        } else { // 取消
+            this.favoriteDao.removeFavoriteItem(key)
+        }
+    }
     renderRightButton() {
         return (<View style={{flexDirection: 'row'}}>
                 <TouchableOpacity
-                    onPress={()=>{
-
-                    }}
+                    onPress={()=>{this.onFavoriteButtonClick()}}
                 >
                     <FontAwesome
-                        name={'star-o'}
+                        name={this.state.isFavorite ? 'star': 'star-o'}
                         size={20}
                         style={{color: 'white', marginRight: 10}}
                     />

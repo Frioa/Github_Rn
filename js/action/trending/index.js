@@ -49,7 +49,7 @@ export function onLoadMoreTrending(storeName, pageIndex, pageSize, dataArray = [
                     error: 'no more',
                     storeName: storeName,
                     pageIndex: --pageIndex, // pageIndex 是请求第几页的数据，没有数据- 1
-                    projectModes: dataArray,
+                    projectModels: dataArray,
                 })
             } else {
                 // 本次载入最大数量
@@ -58,7 +58,7 @@ export function onLoadMoreTrending(storeName, pageIndex, pageSize, dataArray = [
                     type: Types.TRENDING_LOAD_MORE_SUCCESS,
                     storeName,
                     pageIndex,
-                    projectModes: dataArray.slice(0, max) // 返回一个子数组 [0,max]
+                    projectModels: dataArray.slice(0, max) // 返回一个子数组 [0,max]
                 })
             }
         }, 100)
