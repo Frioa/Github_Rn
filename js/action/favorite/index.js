@@ -13,7 +13,7 @@ import ProjectModel from "../../model/ProjectModel";
 export function onLoadFavoriteData(flag, isShowLoading) {
     // 异步action
     return dispatch => {
-        if (isShowLoading) {
+        if (isShowLoading) { // 只有 true 显示加载动画
             dispatch({type: Types.FAVORITE_LOAD_DATA, storeName: flag});
         }
         new FavoriteDao(flag).getAllItems()

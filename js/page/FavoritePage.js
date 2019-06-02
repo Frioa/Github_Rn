@@ -15,26 +15,27 @@ import FavoriteDao from "../expand/dao/FavoriteDao";
 import {FLAG_STORAGE} from "../expand/dao/DataStore";
 import FavoriteUtil from "../util/FavoriteUtil";
 import TrendingItem from "../common/TrendingItem";
+import EventBus from "react-native-event-bus";
+import EventTypes from "../util/EventTypes";
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
+
 export default class FavoritePage extends Component<Props> {
     constructor(props) {
         super(props);
         console.log(NavigationUtil.navigation);
     }
-
-
     render() {
         let statusBar={
             backgroundColor: THEME_COLOR,
             barStyle: 'light-content',
         };
         let navigationBar = <NavigationBar
-            title={'最热'}
+            title={'收藏'}
             statusBar={statusBar}
             style={{backgroundColor: THEME_COLOR}}
         />;
@@ -57,7 +58,6 @@ export default class FavoritePage extends Component<Props> {
                 tabBarOptions: {
                     tabStyle: styles.tabStyle,
                     upperCaseLabel: false, // 是否标签大写，默认 true
-                    scrollEnabled: true, // 是否支持滚动， 默认false
                     style: {
                         backgroundColor: '#678', // TabBar 的背景色
                         height: 30, // fix 开启scrollEnabled 后再Android上初次加载闪烁问题
@@ -85,6 +85,14 @@ class FavoriteTab extends Component<Props> {
 
     componentDidMount(): void {
         this.loadData(false);
+        EventBus.getInstance().addListener(EventTypes.bottom_tab_select, this.listener = data => {
+            if (data.to === 2) { // 切换到index=2
+                this.loadData(false);
+            }
+        })
+    }
+    componentWillUnmount() { // 移除监听
+        EventBus.getInstance().removeListener(this.listener);
     }
 
     loadData(isShowLoading) {
@@ -109,6 +117,14 @@ class FavoriteTab extends Component<Props> {
         return store
     }
 
+    onFavorite(item, isFavorite) {
+        FavoriteUtil.onFavorite(this.favoriteDao, item, isFavorite, this.props.flag);
+        if (this.storeName === FLAG_STORAGE.flag_popular) {
+            EventBus.getInstance().fireEvent(EventTypes.favorite_changed_popular);
+        } else {
+            EventBus.getInstance().fireEvent(EventTypes.favoriteChanged_trending);
+        }
+    }
 
     renderItem(data) {
         const item = data.item;
@@ -122,7 +138,7 @@ class FavoriteTab extends Component<Props> {
                     callback
                 },'DetailPage')
             }}
-            onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, this.storeName)}
+            onFavorite={(item, isFavorite) => this.onFavorite(item, isFavorite)}
         />
     }
 

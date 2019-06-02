@@ -1,6 +1,6 @@
 import Types from '../types'
 import DataStore, {FLAG_STORAGE} from '../../expand/dao/DataStore'
-import {handleData} from '../ActionUtil'
+import {handleData, _projectModels} from '../ActionUtil'
 /**
  * 获取最热数据的异步action
  * @param storeName：最热列表的哪一个action（JAVA, Android，IOS...）
@@ -62,6 +62,30 @@ export function onLoadMoreTrending(storeName, pageIndex, pageSize, dataArray = [
                 })
             }
         }, 100)
+    }
+}
+
+/**
+ * 刷新收藏状态
+ * @param storeName
+ * @param pageIndex 第几页
+ * @param pageSize 每页展示条数
+ * @param dataArray 原始数据
+ * @param favoriteDao
+ * @returns {function(*)}
+ */
+export function onFlushTrendingFavorite(storeName, pageIndex, pageSize, dataArray = [], favoriteDao) {
+    return dispatch => {
+        //本次和载入的最大数量
+        let max = pageSize * pageIndex > dataArray.length ? dataArray.length : pageSize * pageIndex;
+        _projectModels(dataArray.slice(0, max), favoriteDao, data => {
+            dispatch({
+                type: Types.FLUSH_TRENDING_FAVORITE,
+                storeName,
+                pageIndex,
+                projectModels: data,
+            })
+        })
     }
 }
 

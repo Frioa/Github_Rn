@@ -14,8 +14,9 @@ import MyPage from '../page/MyPage'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import Entypo from 'react-native-vector-icons/Entypo'
-import NavigationUtil from "../navigator/NavigationUtil";
+import EventTypes from "../util/EventTypes";
 import {BottomTabBar} from 'react-navigation-tabs';
+import EventBus from "react-native-event-bus";
 
 
 const TABS = { // 这里配置页面路由
@@ -101,7 +102,14 @@ class DynamicTabNavigator extends Component<Props> {
         // 保存外部 navigation , 可以使用外部的跳转
         // NavigationUtil.navigation = this.props.navigation;
         const Tab = this._tabNavigator();
-        return <Tab/>
+        return <Tab
+            onNavigationStateChange = {(prevState, newState, action) => {
+                // 底部Tab切换发送事件之前的状态，切换之后的状态
+                EventBus.getInstance().fireEvent(EventTypes.bottom_tab_select,{ // 发送底部tab切换的事件
+                    from : prevState.index,
+                    to: newState.index,
+                })
+            }}/>
     }
 }
 class TabBarComponent extends React.Component{
