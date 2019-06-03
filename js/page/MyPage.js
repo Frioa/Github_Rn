@@ -39,7 +39,17 @@ export default class MyPage extends Component<Props> {
     }
 
     onClick(menu) {
-
+        let RouteName, params = {};
+        switch (menu) {
+            case MORE_MENU.Tutorial:
+                RouteName = 'WebViewPage';
+                params.title = '教程';
+                params.url = 'https://coding.m.imooc.com/classindex.html?cid=89';
+                break
+        }
+        if (RouteName) {
+            NavigationUtil.goPage(params, RouteName);
+        }
     }
     getItem(menu) {
         return ViewUtil.getMenuItem(()=>this.onClick(menu), menu, THEME_COLOR)
@@ -137,12 +147,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#F5FCFF',
-    },
-    welcome: {
-        fontSize: 20,
-        textAlign: 'center',
-        margin: 10,
-
     },
     about_left: {
         alignItems: 'center',
