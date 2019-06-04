@@ -23,16 +23,20 @@ export default class WebViewPage extends Component<Props> {
         };
         this.backPress = new BackPressComponent({backPress: () => this.onBackPress()})
     }
+
     componentDidMount(): void {
         this.backPress.componentDidMount()
     }
+
     componentWillUnmount(): void {
         this.backPress.componentWillUnmount()
     }
+
     onBackPress() {
         this.onBack();
         return true
     }
+
     onBack() {
         if (this.state.canGoBack) {
             this.webView.goBack() // WebView 返回上一层
@@ -47,20 +51,21 @@ export default class WebViewPage extends Component<Props> {
             url: navState.url
         })
     }
+
     render() {
         let navigationBar = <NavigationBar
             title={this.state.title}
             style={{backgroundColor: THEME_COLOR}}
-            leftButton={ViewUtil.getLeftBackButton(()=> this.onBackPress())}
+            leftButton={ViewUtil.getLeftBackButton(() => this.onBackPress())}
         />;
         return (
             <View style={styles.container}>
-               {navigationBar}
+                {navigationBar}
                 <WebView
-                    ref = {webView => this.webView = webView}
-                    startInLoadingState={true}
-                    onNavigationStateChange={e=>this.onNavigationStateChange(e)}
-                    source = {{uri: this.state.url}}
+                    ref={webView => this.webView = webView}
+                    startInLoadingState={true} // 加载进度条
+                    onNavigationStateChange={e => this.onNavigationStateChange(e)} // 导航状态发生变化监听
+                    source={{uri: this.state.url}}
                 />
             </View>
         );
@@ -70,6 +75,6 @@ export default class WebViewPage extends Component<Props> {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        marginTop: DeviceInfo.isIPoneX_deprecated ? 30: 0
+        marginTop: DeviceInfo.isIPoneX_deprecated ? 30 : 0
     },
 });

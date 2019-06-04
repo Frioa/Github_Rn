@@ -7,37 +7,12 @@ import {onThemeChange} from "../action/theme";
 import NavigationBar from "../common/NavigationBar";
 import {MORE_MENU} from "../common/MORE_MENU";
 import {connect} from 'react-redux';
-import GlobalStyles from "../res/GlobalStyles";
+import GlobalStyles from "../res/styles/GlobalStyles";
 import ViewUtil from "../util/ViewUtil";
 
 const THEME_COLOR = '#678';
 type Props = {};
 export default class MyPage extends Component<Props> {
-    getRightButton() {
-        return <View style={{flexDirection: 'row'}}>
-            <TouchableOpacity
-            >
-                <View syles={{padding: 5, marginRight: 8}}>
-                    <Feather
-                        name={'search'}
-                        size={24}
-                        style={{color: 'white'}}/>
-                </View>
-            </TouchableOpacity>
-        </View>
-    }
-
-    getLeftButton(callBack) {
-        return <TouchableOpacity
-            style={{padding: 8, paddingLeft: 12}}
-            onPredd={callBack}>
-            <Ionicons
-                name={'ios-arrow-back'}
-                size={26}
-                style={{color: 'white'}}/>
-        </TouchableOpacity>
-    }
-
     onClick(menu) {
         let RouteName, params = {};
         switch (menu) {
@@ -45,7 +20,10 @@ export default class MyPage extends Component<Props> {
                 RouteName = 'WebViewPage';
                 params.title = '教程';
                 params.url = 'https://coding.m.imooc.com/classindex.html?cid=89';
-                break
+                break;
+            case MORE_MENU.About:
+                RouteName = 'AboutPage';
+                break;
         }
         if (RouteName) {
             NavigationUtil.goPage(params, RouteName);
@@ -65,8 +43,7 @@ export default class MyPage extends Component<Props> {
                 title={'我的'}
                 statusBar={statusBar}
                 style={{backgroundColor: THEME_COLOR}}
-                rightButton={this.getRightButton()}
-                leftButton={this.getLeftButton()}/>;
+           />;
         return (
             <View style={GlobalStyles.root_container}>
                 {navigationBar}
