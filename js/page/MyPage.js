@@ -9,6 +9,7 @@ import {MORE_MENU} from "../common/MORE_MENU";
 import {connect} from 'react-redux';
 import GlobalStyles from "../res/styles/GlobalStyles";
 import ViewUtil from "../util/ViewUtil";
+import {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
 
 const THEME_COLOR = '#678';
 type Props = {};
@@ -24,6 +25,13 @@ export default class MyPage extends Component<Props> {
             case MORE_MENU.About:
                 RouteName = 'AboutPage';
                 break;
+            case MORE_MENU.Custom_Key:
+            case MORE_MENU.Custom_Language:
+            case MORE_MENU.Remove_Key:
+                RouteName = 'CustomKeyPage';
+                params.isRemoveKey = menu === MORE_MENU.Remove_Key;
+                params.flag = menu !== MORE_MENU.Custom_Language ? FLAG_LANGUAGE.flag_key : FLAG_LANGUAGE.flag_language;
+                break;
             case MORE_MENU.About_Author:
                 RouteName = 'AboutMePage';
                 break;
@@ -32,9 +40,11 @@ export default class MyPage extends Component<Props> {
             NavigationUtil.goPage(params, RouteName);
         }
     }
+
     getItem(menu) {
-        return ViewUtil.getMenuItem(()=>this.onClick(menu), menu, THEME_COLOR)
+        return ViewUtil.getMenuItem(() => this.onClick(menu), menu, THEME_COLOR)
     }
+
     render() {
         const {navigation} = this.props;
         let statusBar = {
@@ -46,7 +56,7 @@ export default class MyPage extends Component<Props> {
                 title={'我的'}
                 statusBar={statusBar}
                 style={{backgroundColor: THEME_COLOR}}
-           />;
+            />;
         return (
             <View style={GlobalStyles.root_container}>
                 {navigationBar}
@@ -61,17 +71,17 @@ export default class MyPage extends Component<Props> {
                                 style={{
                                     marginRight: 10,
                                     color: THEME_COLOR,
-                                                                }}/>
+                                }}/>
                             <Text>GitHub Popular</Text>
                         </View>
                         <Ionicons
-                        name={'ios-arrow-forward'}
-                        size={16}
-                        style={{
-                            marginRight: 10,
-                            alignSelf: 'center',
-                            color: THEME_COLOR,
-                        }}/>
+                            name={'ios-arrow-forward'}
+                            size={16}
+                            style={{
+                                marginRight: 10,
+                                alignSelf: 'center',
+                                color: THEME_COLOR,
+                            }}/>
                     </TouchableOpacity>
                     <View style={GlobalStyles.line}/>
                     {this.getItem(MORE_MENU.Tutorial)}

@@ -11,6 +11,7 @@ import {connect} from 'react-redux'
 import {createReactNavigationReduxMiddleware, createReduxContainer}from 'react-navigation-redux-helpers'
 import AboutPage from "../page/about/AboutPage";
 import AboutMePage from "../page/about/AboutMePage";
+import CustomKeyPage from "../page/CustomKeyPage";
 
 export const rootCom = 'Init'; // 设置根路由
 
@@ -50,6 +51,12 @@ const MainNavigator = createStackNavigator({
     },
     AboutMePage: {
         screen: AboutMePage,
+        navigationOptions: {
+            header: null // 可以通过将 header 设置为 null 来禁用StackNavigator 的 Navigation Bar
+        }
+    },
+    CustomKeyPage: {
+        screen: CustomKeyPage,
         navigationOptions: {
             header: null // 可以通过将 header 设置为 null 来禁用StackNavigator 的 Navigation Bar
         }
