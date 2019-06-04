@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Button, ScrollView, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Button, Linking, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
 import NavigationUtil from "../../navigator/NavigationUtil";
 import {MORE_MENU} from "../../common/MORE_MENU";
 import GlobalStyles from "../../res/styles/GlobalStyles";
@@ -30,7 +30,20 @@ export default class AboutPage extends Component<Props> {
                 RouteName = 'WebViewPage';
                 params.title = '教程';
                 params.url = 'https://coding.m.imooc.com/classindex.html?cid=89';
-                break
+                break;
+            case MORE_MENU.Feedback:
+                const url = 'mailto://crazycodeboy@gmail.com';
+                Linking.canOpenURL(url)
+                    .then(support => {
+                        if (!support) {
+                            console.log('Can\t handle url : ' + url)
+                        } else {
+                            Linking.openURL(url)
+                        }
+                    }).catch(e => {
+                        console.error('An error occurred', e)
+                });
+                break;
         }
         if (RouteName) {
             NavigationUtil.goPage(params, RouteName);
