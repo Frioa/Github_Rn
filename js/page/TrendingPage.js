@@ -121,7 +121,8 @@ class TrendingPage extends Component<Props> {
                         },
                         indicatorStyle: styles.indicatorStyle, // 指示器属性
                         labelStyle: styles.labelStyle, // 文字属性
-                    }
+                    },
+                    lazy: true, // 懒加载
                 }
             ));
         }

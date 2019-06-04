@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, ScrollView, View, RefreshControl, Text} from 'react-native';
+import {StyleSheet, ScrollView, View, Alert, Text} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../action/index'
 import {
@@ -34,7 +34,7 @@ class CustomKeyPage extends Component<Props> {
         super(props);
         this.params = this.props.navigation.state.params;
         this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
-        this.changeValues = []; //报错用户触发的变更
+        this.changeValues = []; //用户触发的变更
         this.isRemoveKey = !!this.params.isRemoveKey;// 标识：是不是标签移除页面
         this.languageDao = new LanguageDao(this.params.flag);
         this.state = {
@@ -95,7 +95,22 @@ class CustomKeyPage extends Component<Props> {
     }
 
     onBack() {
-        NavigationUtil.goBack(this.props.navigation)
+        if (this.changeValues.length > 0) {
+            Alert.alert('提示', '要保存修改吗？',
+                [
+                    {
+                        text: '否', onPress: () => {
+                            NavigationUtil.goBack(this.props.naivgation)
+                        }
+                    },{
+                        text: '是', onPress: () => {
+                            this.onSave();
+                    }
+                }
+                ])
+        } else {
+            NavigationUtil.goBack(this.props.navigation)
+        }
     }
     _checkedImage(checked) {
         return <Ionicons
@@ -107,14 +122,22 @@ class CustomKeyPage extends Component<Props> {
     }
 
     onSave() {
-        return <CheckBox
-            style={{flex: 1, padding: 10}}
-            onClick={() => this.onClick(data, index)}
-            isChecked={data.checked}
-            leftText={data.name}
-            checkedImage={this._checkedImage(true)}
-            unCheckedImage={this._checkedImage(false)}
-        />
+        if (this.changeValues.length === 0) {
+            NavigationUtil.goBack(this.props.navigation);
+            return;
+        }
+        let keys;
+        if (this.isRemoveKey) {//移除标签的特殊处理
+            for (let i = 0, l = this.changeValues.length; i < l; i++) {
+                ArrayUtil.remove(keys = CustomKeyPage._keys(this.props, true), this.changeValues[i], "name");
+            }
+        }
+        //更新本地数据
+        this.languageDao.save(keys || this.state.keys);
+        const {onLoadLanguage} = this.props;
+        //更新store, 其他模块render方法
+        onLoadLanguage(this.params.flag);
+        NavigationUtil.goBack(this.props.navigation);
     }
 
     renderView() {
