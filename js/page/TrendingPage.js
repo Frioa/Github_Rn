@@ -1,5 +1,15 @@
 import React, {Component} from 'react';
-import {FlatList, DeviceEventEmitter,DeviceInfo, StyleSheet, ActivityIndicator, View, RefreshControl, Text, TouchableOpacity} from 'react-native';
+import {
+    FlatList,
+    DeviceEventEmitter,
+    DeviceInfo,
+    StyleSheet,
+    ActivityIndicator,
+    View,
+    RefreshControl,
+    Text,
+    TouchableOpacity
+} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../action/index'
 import {
@@ -21,54 +31,66 @@ import PopularItem from "../common/PopularItem";
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import EventBus from "react-native-event-bus";
 import EventTypes from "../util/EventTypes";
+import {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
+import ArrayUtil from "../util/ArrayUtil";
+
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_trending);
 
 type Props = {};
-export default class TrendingPage extends Component<Props> {
+
+class TrendingPage extends Component<Props> {
     constructor(props) {
         super(props);
         console.log(NavigationUtil.navigation);
-        this.tabNames = ['All', 'C', 'C#', 'PHP', 'Kotlin', 'JavaScript'];
         this.state = {
             timeSpan: TimeSpans[0]
-        }
+        };
+        const {onLoadLanguage} = this.props;
+        onLoadLanguage(FLAG_LANGUAGE.flag_language);
+        this.preKeys = []; // 存储上次的Keys
     }
 
     _genTabs() {
         const tabs = {};
-        this.tabNames.forEach((item, index) => {
-            tabs['tab' + index] = {
-                screen: props => <TrendingTabPage {...props}  timeSpan = {this.state.timeSpan} tabLabel={item}/>, // 点击Tab，传递属性（路由传递参数）
-                navigationOptions: {
-                    title: item
+        const {keys} = this.props;
+        this.preKeys = keys;
+        keys.forEach((item, index) => {
+            if (item.checked) {
+                tabs['tab' + index] = {
+                    screen: props => <TrendingTabPage {...props} timeSpan={this.state.timeSpan} tabLabel={item.name}/>, // 点击Tab，传递属性（路由传递参数）
+                    navigationOptions: {
+                        title: item.name
+                    }
                 }
             }
         });
         return tabs
     }
+
     renderTitleView() {
         return <View>
             <TouchableOpacity
-                ref = 'button'
-                underlayColor = 'transparent'
-                onPress={()=>this.dialog.show()}>
+                ref='button'
+                underlayColor='transparent'
+                onPress={() => this.dialog.show()}>
                 <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                    <Text style = {{
+                    <Text style={{
                         fontSize: 18,
                         color: '#FFFFFF',
                         fontWeight: '400'
                     }}>趋势 {this.state.timeSpan.showText}</Text>
                     <MaterialIcons
-                        name = {'arrow-drop-down'}
-                        size = {22}
-                        style = {{color : 'white'}}
+                        name={'arrow-drop-down'}
+                        size={22}
+                        style={{color: 'white'}}
                     />
                 </View>
             </TouchableOpacity>
         </View>
     }
+
     onSelectTimeSpan(tab) {
         this.dialog.dismiss();
         this.setState({
@@ -77,14 +99,16 @@ export default class TrendingPage extends Component<Props> {
         // 发送一个事件DeviceEventEmitter，类型，参数
         DeviceEventEmitter.emit(EVENT_TYPE_TIME_SPAN_CHANGE, tab);
     }
+
     renderTrendingDialog() {
         return <TrendingDialog
-            ref = {dialog=>this.dialog = dialog}
-            onSelect = {tab => this.onSelectTimeSpan(tab)}
+            ref={dialog => this.dialog = dialog}
+            onSelect={tab => this.onSelectTimeSpan(tab)}
         />
     }
+
     _tabNav() {
-        if (!this.tabNav)  { // 优化：如果TopNavigator创建好了不用创建了
+        if (!this.tabNav || !ArrayUtil.isEqual(this.preKeys, this.props.keys)) { // 优化：如果TopNavigator创建好了不用创建了
             this.tabNav = createAppContainer(createMaterialTopTabNavigator(
                 this._genTabs(), {
                     tabBarOptions: {
@@ -103,7 +127,9 @@ export default class TrendingPage extends Component<Props> {
         }
         return this.tabNav;
     }
+
     render() {
+        const {keys} = this.props;
         let statusBar = {
             backgroundColor: THEME_COLOR,
             barStyle: 'light=content',
@@ -113,14 +139,22 @@ export default class TrendingPage extends Component<Props> {
             statusBar={statusBar}
             style={{backgroundColor: THEME_COLOR}}
         />;
-        const TabNavigator = this._tabNav();
+        const TabNavigator = keys.length ? this._tabNav() : null;
         return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0}}>
             {navigationBar}
-            <TabNavigator/>
+            {TabNavigator && <TabNavigator/>}
             {this.renderTrendingDialog()}
         </View>
     }
 }
+
+const mapPopularStateToProps = state => ({
+    keys: state.language.languages,
+});
+const mapPopularDispatchToProps = dispatch => ({
+    onLoadLanguage: (flag) => dispatch(actions.onLoadLanguage(flag))
+});
+export default connect(mapPopularStateToProps, mapPopularDispatchToProps)(TrendingPage)
 
 const pageSize = 10; // 设置常量防止修改
 class TrendingTab extends Component<Props> {
@@ -142,7 +176,8 @@ class TrendingTab extends Component<Props> {
                 this.loadData(null, true);
             }
         })
-}
+    }
+
     componentWillUnmount() {
         EventBus.getInstance().removeListener(this.favoriteChangeListener);
         EventBus.getInstance().removeListener(this.bottomTabSelectListener);
@@ -154,13 +189,14 @@ class TrendingTab extends Component<Props> {
 
         const url = this.genFetchUrl(this.storeName);
         if (loadMore) {
-            onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items,favoriteDao, callback => { // callback 回调说明失败
+            onLoadMoreTrending(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao, callback => { // callback 回调说明失败
                 this.refs.toast.show('没有更多了')
             })
-        } if(refreshFavorite){
+        }
+        if (refreshFavorite) {
             onFlushTrendingFavorite(this.storeName, store.pageIndex, pageSize, store.items, favoriteDao);
-        }  else {
-            onLoadTrendingData(this.storeName, url, pageSize,favoriteDao)
+        } else {
+            onLoadTrendingData(this.storeName, url, pageSize, favoriteDao)
         }
         // onLoadPopularData(this.storeName, url);
 
@@ -185,7 +221,7 @@ class TrendingTab extends Component<Props> {
     }
 
     genFetchUrl(key) {
-        return URL + key + '?' +this.timeSpan.searchText
+        return URL + key + '?' + this.timeSpan.searchText
     }
 
     renderItem(data) {
@@ -262,8 +298,8 @@ const mapStateToProps = state => ({
 });
 // dispatch 创建函数
 const mapDispatchToProps = dispatch => ({
-    onLoadTrendingData: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onLoadTrendingData(storeName, url, pageSize,favoriteDao)),
-    onLoadMoreTrending: (storeName, url, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMoreTrending(storeName, url, pageSize, items, favoriteDao,callBack)),
+    onLoadTrendingData: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onLoadTrendingData(storeName, url, pageSize, favoriteDao)),
+    onLoadMoreTrending: (storeName, url, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMoreTrending(storeName, url, pageSize, items, favoriteDao, callBack)),
     onFlushTrendingFavorite: (storeName, pageIndex, pageSize, items, favoriteDao) => dispatch(actions.onFlushTrendingFavorite(storeName, pageIndex, pageSize, items, favoriteDao)),
 });
 // 注意：connect只是一个function，并不一定要放在export后面

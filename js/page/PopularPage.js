@@ -16,26 +16,32 @@ import {FLAG_STORAGE} from "../expand/dao/DataStore";
 import FavoriteUtil from "../util/FavoriteUtil";
 import EventBus from "react-native-event-bus";
 import EventTypes from "../util/EventTypes";
+import {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
 
 const URL = 'https://api.github.com/search/repositories?q=';
 const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
 const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
-export default class PopularPage extends Component<Props> {
+
+class PopularPage extends Component<Props> {
     constructor(props) {
         super(props);
-        console.log(NavigationUtil.navigation);
-        this.tabNames = ['Java', 'Android', 'iOS', 'React', 'React Native', 'Kotlin', 'C++'];
+        const {onLoadLanguage} = this.props;
+        onLoadLanguage(FLAG_LANGUAGE.flag_key)
     }
 
     _genTabs() {
         const tabs = {};
-        this.tabNames.forEach((item, index) => {
-            tabs['tab' + index] = {
-                screen: props => <PopularTabPage {...props} tabLabel={item}/>, // 点击Tab，传递属性（路由传递参数）
-                navigationOptions: {
-                    title: item
+        const {keys} = this.props;
+
+        keys.forEach((item, index) => {
+            if (item.checked) { // 选中情况下
+                tabs['tab' + index] = {
+                    screen: props => <PopularTabPage {...props} tabLabel={item.name}/>, // 点击Tab，传递属性（路由传递参数）
+                    navigationOptions: {
+                        title: item.name
+                    }
                 }
             }
         });
@@ -43,7 +49,8 @@ export default class PopularPage extends Component<Props> {
     }
 
     render() {
-        let statusBar={
+        const {keys} = this.props;
+        let statusBar = {
             backgroundColor: THEME_COLOR,
             barStyle: 'light-content',
         };
@@ -52,7 +59,7 @@ export default class PopularPage extends Component<Props> {
             statusBar={statusBar}
             style={{backgroundColor: THEME_COLOR}}
         />;
-        const TabNavigator = createAppContainer(createMaterialTopTabNavigator(
+        const TabNavigator = keys.length ? createAppContainer(createMaterialTopTabNavigator(
             this._genTabs(), {
                 tabBarOptions: {
                     tabStyle: styles.tabStyle,
@@ -66,14 +73,22 @@ export default class PopularPage extends Component<Props> {
                     labelStyle: styles.labelStyle, // 文字属性
                 }
             }
-        ));
-        return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated? 30  : 0}}>
-                {navigationBar}
-                <TabNavigator/>
+        )) : null;
+        return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0}}>
+            {navigationBar}
+            {TabNavigator && <TabNavigator/>}
         </View>
 
     }
 }
+
+const mapPopularStateToProps = state => ({
+    keys: state.language.keys,
+});
+const mapPopularDispatchToProps = dispatch => ({
+    onLoadLanguage: (flag) => dispatch(actions.onLoadLanguage(flag))
+});
+export default connect(mapPopularStateToProps, mapPopularDispatchToProps)(PopularPage)
 
 const pageSize = 10; // 设置常量防止修改
 class PopularTab extends Component<Props> {
@@ -107,10 +122,10 @@ class PopularTab extends Component<Props> {
 
         const url = this.genFetchUrl(this.storeName);
         if (loadMore) {
-            onLoadMorePopular(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao,callback => { // callback 回调说明失败
+            onLoadMorePopular(this.storeName, ++store.pageIndex, pageSize, store.items, favoriteDao, callback => { // callback 回调说明失败
                 this.refs.toast.show('没有更多了')
             })
-        } else if(refreshFavorite) {
+        } else if (refreshFavorite) {
             onFlushPopularFavorite(this.storeName, store.pageIndex, pageSize, store.items, favoriteDao);
         } else {
             onLoadPopularData(this.storeName, url, pageSize, favoriteDao)
@@ -148,9 +163,9 @@ class PopularTab extends Component<Props> {
             onSelect={(callback) => {
                 NavigationUtil.goPage({
                     projectModels: item,
-                    flag : FLAG_STORAGE.flag_popular,
+                    flag: FLAG_STORAGE.flag_popular,
                     callback
-                },'DetailPage')
+                }, 'DetailPage')
             }}
             onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, FLAG_STORAGE.flag_popular)}
         />
@@ -188,12 +203,12 @@ class PopularTab extends Component<Props> {
                     ListFooterComponent={() => this.genIndicator()}
                     onEndReached={() => {
                         console.log('---onEndReached---');
-                        setTimeout(()=>{ // 优化：抱着这个方法在onEndReachedThreshold之后执行
+                        setTimeout(() => { // 优化：抱着这个方法在onEndReachedThreshold之后执行
                             if (this.canLoadMore) { // 优化：解决多次调用问题
                                 this.loadData(true);
                                 this.canLoadMore = false
                             }
-                        },100);
+                        }, 100);
 
                     }}
                     onEndReachedThreshold={0.5} // 一个比值
@@ -217,8 +232,8 @@ const mapStateToProps = state => ({
 });
 // dispatch 创建函数
 const mapDispatchToProps = dispatch => ({
-    onLoadPopularData: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onLoadPopularData(storeName, url, pageSize,favoriteDao)),
-    onLoadMorePopular: (storeName, url, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMorePopular(storeName, url, pageSize, items, favoriteDao,callBack)),
+    onLoadPopularData: (storeName, url, pageSize, favoriteDao) => dispatch(actions.onLoadPopularData(storeName, url, pageSize, favoriteDao)),
+    onLoadMorePopular: (storeName, url, pageSize, items, favoriteDao, callBack) => dispatch(actions.onLoadMorePopular(storeName, url, pageSize, items, favoriteDao, callBack)),
     onFlushPopularFavorite: (storeName, pageIndex, pageSize, items, favoriteDao) => dispatch(actions.onFlushPopularFavorite(storeName, pageIndex, pageSize, items, favoriteDao)),
 });
 // 注意：connect只是一个function，并不一定要放在export后面
@@ -229,7 +244,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     tabStyle: {
-       //  minWidth: 50 //fix minWidth会导致tabStyle初次加载时闪烁
+        //  minWidth: 50 //fix minWidth会导致tabStyle初次加载时闪烁
         padding: 0
     },
     indicatorStyle: {
@@ -238,8 +253,8 @@ const styles = StyleSheet.create({
     },
     labelStyle: {
         fontSize: 13,
-    /*    marginTop: 6,
-        marginBottom: 6,*/
+        /*    marginTop: 6,
+            marginBottom: 6,*/
         margin: 0,
     },
     indicatorContainer: {
