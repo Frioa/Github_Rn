@@ -20,7 +20,7 @@ export default class LanguageDao {
                     reject(error);
                     return;
                 }
-                if (!result) {// 无数据
+                if ( !result || result.length === 2) {// 无数据
                     // 初始化数据
                     let data = this.flag === FLAG_LANGUAGE.flag_language ? langs : keys;
                     this.save(data);

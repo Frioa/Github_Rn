@@ -2,20 +2,10 @@ import React, {Component} from 'react';
 import {StyleSheet, ScrollView, View, Alert, Text} from 'react-native';
 import {connect} from 'react-redux';
 import actions from '../action/index'
-import {
-    createMaterialTopTabNavigator,
-    createAppContainer
-} from "react-navigation"
 import NavigationUtil from "../navigator/NavigationUtil";
-import PopularItem from '../common/PopularItem'
-import Toast from 'react-native-easy-toast'
 import NavigationBar from '../common/NavigationBar'
-import {DeviceInfo} from 'react-native'
 import FavoriteDao from "../expand/dao/FavoriteDao";
 import {FLAG_STORAGE} from "../expand/dao/DataStore";
-import FavoriteUtil from "../util/FavoriteUtil";
-import EventBus from "react-native-event-bus";
-import EventTypes from "../util/EventTypes";
 import LanguageDao, {FLAG_LANGUAGE} from "../expand/dao/LanguageDao";
 import BackPressComponent from "../common/BackPressComponent";
 import ViewUtil from "../util/ViewUtil";
@@ -23,10 +13,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import CheckBox from 'react-native-check-box'
 import ArrayUtil from "../util/ArrayUtil";
 
-const URL = 'https://api.github.com/search/repositories?q=';
-const QUERY_STR = '&sort=stars';
 const THEME_COLOR = '#678';
-const favoriteDao = new FavoriteDao(FLAG_STORAGE.flag_popular);
 type Props = {};
 
 class CustomKeyPage extends Component<Props> {

@@ -25,6 +25,14 @@ export default class MyPage extends Component<Props> {
             case MORE_MENU.About:
                 RouteName = 'AboutPage';
                 break;
+            case MORE_MENU.Sort_Key:
+                RouteName = 'SortKeyPage';
+                params.flag = FLAG_LANGUAGE.flag_key;
+                break;
+            case MORE_MENU.Sort_Language:
+                RouteName = 'SortKeyPage';
+                params.flag = FLAG_LANGUAGE.flag_language;
+                break;
             case MORE_MENU.Custom_Key:
             case MORE_MENU.Custom_Language:
             case MORE_MENU.Remove_Key:

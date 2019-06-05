@@ -10,8 +10,9 @@ import WebViewPage from '../page/WebViewPage'
 import {connect} from 'react-redux'
 import {createReactNavigationReduxMiddleware, createReduxContainer}from 'react-navigation-redux-helpers'
 import AboutPage from "../page/about/AboutPage";
-import AboutMePage from "../page/about/AboutMePage";
-import CustomKeyPage from "../page/CustomKeyPage";
+import AboutMePage from '../page/about/AboutMePage';
+import CustomKeyPage from '../page/CustomKeyPage';
+import SortKeyPage from "../page/SortKeyPage";
 
 export const rootCom = 'Init'; // 设置根路由
 
@@ -61,6 +62,12 @@ const MainNavigator = createStackNavigator({
             header: null // 可以通过将 header 设置为 null 来禁用StackNavigator 的 Navigation Bar
         }
     },
+    SortKeyPage: {
+        screen: SortKeyPage,
+        navigationOptions: {
+            header: null // 可以通过将 header 设置为 null 来禁用StackNavigator 的 Navigation Bar
+        }
+    }
 });
 
 export const RootNavigator = createAppContainer(createSwitchNavigator({
