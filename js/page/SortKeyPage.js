@@ -13,7 +13,6 @@ import ArrayUtil from "../util/ArrayUtil";
 import SortableListView from 'react-native-sortable-listview';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-const THEME_COLOR = '#678';
 type Props = {};
 
 class SortKeyPage extends Component<Props> {
@@ -141,9 +140,10 @@ class SortKeyPage extends Component<Props> {
 
     render() {
         let title = this.params.flag === FLAG_LANGUAGE.flag_language ? '语言排序' : '标签排序';
+        const {theme} = this.params;
         let navigationBar = <NavigationBar
             title={title}
-            style={{backgroundColor: THEME_COLOR}}
+            style={theme.styles.navBar}
             leftButton={ViewUtil.getLeftBackButton(()=>this.onBack())}
             rightButton={ViewUtil.getRightButton('保存', () => this.onSave())}
         />;
@@ -157,7 +157,7 @@ class SortKeyPage extends Component<Props> {
                     this.state.checkedArray.splice(e.to, 0, this.state.checkedArray.splice(e.from, 1)[0]);
                     this.forceUpdate()
                 }}
-                renderRow={row => <SortCell data={row} {...this.params}/>}
+                renderRow={row => <SortCell data={row} {...this.params} theme = {theme}/>}
             />
         </View>
 
@@ -174,7 +174,7 @@ class SortCell extends Component {
                 <MaterialCommunityIcons
                     name={'sort'}
                     size={16}
-                    style={{marginRight: 10, color: THEME_COLOR}}/>
+                    style={{marginRight: 10, color: theme.themeColor}}/>
                 <Text>{this.props.data.name}</Text>
             </View>
         </TouchableHighlight>

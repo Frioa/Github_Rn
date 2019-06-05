@@ -1,13 +1,14 @@
 import React, {Component} from 'react';
-import {Button, Linking, StyleSheet, Text, View, TouchableOpacity} from 'react-native';
+import {Button, Linking, StyleSheet, Text, View, TouchableOpacity, Alert} from 'react-native';
 import NavigationUtil from "../../navigator/NavigationUtil";
 import {MORE_MENU} from "../../common/MORE_MENU";
 import GlobalStyles from "../../res/styles/GlobalStyles";
 import ViewUtil from "../../util/ViewUtil";
 import AboutCommon, {FLAG_ABOUT} from "./AboutCommon";
 import config from '../../res/data/config'
+import BackPressComponent from "../../common/BackPressComponent";
+import ArrayUtil from "../../util/ArrayUtil";
 
-const THEME_COLOR = '#678';
 type Props = {};
 export default class AboutPage extends Component<Props> {
     constructor(props) {
@@ -20,11 +21,19 @@ export default class AboutPage extends Component<Props> {
         }, data => this.setState({...data}));
         this.state = {
             data: config,
-        }
+        };
+
+         this.backPress = new BackPressComponent({backPress: () => this.onBackPress()})
+    }
+   onBackPress() {
+        NavigationUtil.goBack(this.props.navigation);
+        return true;
     }
 
     onClick(menu) {
-        let RouteName, params = {};
+        const {theme} = this.params;
+        let RouteName, params = {theme};
+
         switch (menu) {
             case MORE_MENU.Tutorial:
                 RouteName = 'WebViewPage';
@@ -53,7 +62,8 @@ export default class AboutPage extends Component<Props> {
         }
     }
     getItem(menu) {
-        return ViewUtil.getMenuItem(()=>this.onClick(menu), menu, THEME_COLOR)
+        const {theme} = this.params;
+        return ViewUtil.getMenuItem(()=>this.onClick(menu), menu, theme.themeColor)
     }
     render() {
         const content = <View>

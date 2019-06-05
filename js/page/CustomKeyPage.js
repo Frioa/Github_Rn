@@ -13,7 +13,6 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import CheckBox from 'react-native-check-box'
 import ArrayUtil from "../util/ArrayUtil";
 
-const THEME_COLOR = '#678';
 type Props = {};
 
 class CustomKeyPage extends Component<Props> {
@@ -100,11 +99,12 @@ class CustomKeyPage extends Component<Props> {
         }
     }
     _checkedImage(checked) {
+        const {theme} = this.params;
         return <Ionicons
             name={checked ? 'ios-checkbox' : 'md-square-outline'}
             size={20}
             style={{
-                color: THEME_COLOR,
+                color: theme.themeColor,
             }}/>
     }
 
@@ -167,12 +167,13 @@ class CustomKeyPage extends Component<Props> {
     }
 
     render() {
+        const {theme} = this.params;
         let title = this.isRemoveKey ? '标签移除' : '自定义标签';
         title = this.params.flag === FLAG_LANGUAGE.flag_language ? '自定义语言' : title;
         let rightButtonTitle = this.isRemoveKey ? '移除' : '保存';
         let navigationBar = <NavigationBar
             title={title}
-            style={{backgroundColor: THEME_COLOR}}
+            style={theme.styles.navBar}
             leftButton={ViewUtil.getLeftBackButton(()=>this.onBack())}
             rightButton={ViewUtil.getRightButton(rightButtonTitle, () => this.onSave())}
         />;

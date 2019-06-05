@@ -7,13 +7,19 @@ import ViewUtil from "../../util/ViewUtil";
 import GlobalStyles from "../../res/styles/GlobalStyles";
 
 export const FLAG_ABOUT = {flag_about: 'about', flag_about_me: 'about_me'};
-const THEME_COLOR = '#678';
+
 export default class AboutCommon {
     constructor(props, updateState) {
         this.props = props;
         this.updateState = updateState;
-        this.backPress = new BackPressComponent({backPress: () => this.onBackPress()});
+        this.backPress = new BackPressComponent({backPress: () => this.onBackMyPress()});
     }
+
+    onBackMyPress() {
+        NavigationUtil.goBack(this.props.navigation);
+        return true;
+    }
+
     componentDidMount() {
         this.backPress.componentDidMount();
         // 通过fetch加载网络文件
@@ -39,10 +45,7 @@ export default class AboutCommon {
     componentWillUnmount() {
         this.backPress.componentWillUnmount();
     }
-    onBackPress() {
-        NavigationUtil.goBack(this.props.navigation);
-        return true;
-    }
+
 
 
     onShare() {
@@ -113,10 +116,11 @@ export default class AboutCommon {
 
     }
     render(contentView, params) {
+        const {theme}=this.props;
         const renderConfig = this.getParallaxRenderConfig(params);
         return (
             <ParallaxScrollView
-                backgroundColor={THEME_COLOR}
+                backgroundColor={theme.themeColor}
                 contentBackgroundColor={GlobalStyles.backgroundColor}
                 parallaxHeaderHeight={PARALLAX_HEADER_HEIGHT}
                 stickyHeaderHeight={STICKY_HEADER_HEIGHT}

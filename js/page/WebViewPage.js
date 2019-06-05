@@ -2,14 +2,10 @@ import React, {Component} from 'react';
 import {WebView, StyleSheet, TouchableOpacity, View, DeviceInfo} from 'react-native';
 import NavigationBar from '../common/NavigationBar'
 import ViewUtil from "../util/ViewUtil";
-import FontAwesome from "react-native-vector-icons/FontAwesome";
 import NavigationUtil from "../navigator/NavigationUtil";
 import BackPressComponent from "../common/BackPressComponent";
-import FavoriteDao from "../expand/dao/FavoriteDao";
 
-const TRENDING_URL = 'https://github.com/';
 type Props = {};
-const THEME_COLOR = '#678';
 
 export default class WebViewPage extends Component<Props> {
     constructor(props) {
@@ -21,7 +17,7 @@ export default class WebViewPage extends Component<Props> {
             url: url,
             canGoBack: false, // 返回上一级
         };
-        this.backPress = new BackPressComponent({backPress: () => this.onBackPress()})
+        this.backPress = new BackPressComponent({backPress: (e) => this.onBackPress(e)});
     }
 
     componentDidMount(): void {
@@ -53,9 +49,10 @@ export default class WebViewPage extends Component<Props> {
     }
 
     render() {
+        const {theme} = this.params;
         let navigationBar = <NavigationBar
             title={this.state.title}
-            style={{backgroundColor: THEME_COLOR}}
+            style={theme.styles.navBar}
             leftButton={ViewUtil.getLeftBackButton(() => this.onBackPress())}
         />;
         return (

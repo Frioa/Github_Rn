@@ -54,12 +54,12 @@ class TrendingPage extends Component<Props> {
 
     _genTabs() {
         const tabs = {};
-        const {keys} = this.props;
+        const {keys, theme} = this.props;
         this.preKeys = keys;
         keys.forEach((item, index) => {
             if (item.checked) {
                 tabs['tab' + index] = {
-                    screen: props => <TrendingTabPage {...props} timeSpan={this.state.timeSpan} tabLabel={item.name}/>, // 点击Tab，传递属性（路由传递参数）
+                    screen: props => <TrendingTabPage {...props} timeSpan={this.state.timeSpan} tabLabel={item.name} theme={theme}/>, // 点击Tab，传递属性（路由传递参数）
                     navigationOptions: {
                         title: item.name
                     }
@@ -108,7 +108,8 @@ class TrendingPage extends Component<Props> {
     }
 
     _tabNav() {
-        if (!this.tabNav || !ArrayUtil.isEqual(this.preKeys, this.props.keys)) { // 优化：如果TopNavigator创建好了不用创建了
+        const {theme} = this.props;
+        if (theme !== this.theme || !this.tabNav || !ArrayUtil.isEqual(this.preKeys, this.props.keys)) { // 优化：如果TopNavigator创建好了不用创建了
             this.tabNav = createAppContainer(createMaterialTopTabNavigator(
                 this._genTabs(), {
                     tabBarOptions: {
@@ -116,7 +117,7 @@ class TrendingPage extends Component<Props> {
                         upperCaseLabel: false, // 是否标签大写，默认 true
                         scrollEnabled: true, // 是否支持滚动， 默认false
                         style: {
-                            backgroundColor: '#678', // TabBar 的背景色
+                            backgroundColor: theme.themeColor, // TabBar 的背景色
                             height: 30, // fix 开启scrollEnabled 后再Android上初次加载闪烁问题
                         },
                         indicatorStyle: styles.indicatorStyle, // 指示器属性
@@ -130,15 +131,15 @@ class TrendingPage extends Component<Props> {
     }
 
     render() {
-        const {keys} = this.props;
+        const {keys, theme} = this.props;
         let statusBar = {
-            backgroundColor: THEME_COLOR,
+            backgroundColor: theme.themeColor,
             barStyle: 'light=content',
         };
         let navigationBar = <NavigationBar
             titleView={this.renderTitleView()}
             statusBar={statusBar}
-            style={{backgroundColor: THEME_COLOR}}
+            style={theme.styles.navBar}
         />;
         const TabNavigator = keys.length ? this._tabNav() : null;
         return <View style={{flex: 1, marginTop: DeviceInfo.isIPhoneX_deprecated ? 30 : 0}}>
@@ -151,6 +152,7 @@ class TrendingPage extends Component<Props> {
 
 const mapPopularStateToProps = state => ({
     keys: state.language.languages,
+    theme: state.theme.theme,
 });
 const mapPopularDispatchToProps = dispatch => ({
     onLoadLanguage: (flag) => dispatch(actions.onLoadLanguage(flag))
@@ -227,10 +229,13 @@ class TrendingTab extends Component<Props> {
 
     renderItem(data) {
         const item = data.item;
+        const {theme} = this.props;
         return <TrendingItem
             projectModel={item}
+            theme = {theme}
             onSelect={(callback) => {
                 NavigationUtil.goPage({
+                    theme,
                     projectModels: item,
                     flag: FLAG_STORAGE.flag_trending,
                     callback

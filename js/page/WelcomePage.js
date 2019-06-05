@@ -2,9 +2,12 @@ import React, {Component} from 'react';
 import {Platform, StyleSheet, Text, View} from 'react-native';
 
 import NavigationUtil from "../navigator/NavigationUtil";
+import actions from "../action";
+import {connect} from "react-redux";
 type Props = {};
-export default class WelcomePage extends Component<Props> {
+class WelcomePage extends Component<Props> {
     componentDidMount(): void { // 定时器, 可能造成页面泄漏
+        this.props.onThemeInit();
         this.timer = setTimeout(() => {
             NavigationUtil.resetToHomPage({
                 navigation: this.props.navigation
@@ -21,12 +24,17 @@ export default class WelcomePage extends Component<Props> {
     render() {
         return (
             <View style={styles.container}>
-                <Text style={styles.welcome}>WelcomePage</Text>
+                <Text style={styles.welcome}>WelcomePage1</Text>
             </View>
         );
     }
 }
 
+const mapDispatchToProps = dispatch => ({
+    onThemeInit: () => dispatch(actions.onThemeInit()),
+});
+
+export default connect(null, mapDispatchToProps)(WelcomePage);
 const styles = StyleSheet.create({
     container: {
         flex: 1,

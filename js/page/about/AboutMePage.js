@@ -9,7 +9,6 @@ import config from '../../res/data/config'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import Toast from 'react-native-easy-toast'
 
-const THEME_COLOR = '#678';
 type Props = {};
 export default class AboutMePage extends Component<Props> {
     constructor(props) {
@@ -31,8 +30,10 @@ export default class AboutMePage extends Component<Props> {
 
     onClick(tab) {
        if (!tab) return;
+        const {theme} = this.params;
        if (tab.url) {
            NavigationUtil.goPage({
+               theme,
                title: tab.title,
                url : tab.url
            }, 'WebViewPage');
@@ -54,15 +55,14 @@ export default class AboutMePage extends Component<Props> {
             this.toast.show(tab.title + tab.account + '已复制到剪切板。');
         }
     }
-    getItem(menu) {
-        return ViewUtil.getMenuItem(()=>this.onClick(menu), menu, THEME_COLOR)
-    }
+
     _item(data, isShow, key){
+        const {theme} = this.params;
         return ViewUtil.getSettingItem(()=>{
             this.setState({
                 [key]: !this.state[key] // 根据Key取反展示或者取消Item
             })
-        }, data.name, THEME_COLOR, Ionicons, data.icon, isShow? 'ios-arrow-up': 'ios-arrow-down' )
+        }, data.name, theme.themeColor, Ionicons, data.icon, isShow? 'ios-arrow-up': 'ios-arrow-down' )
     }
 
     /**
@@ -73,12 +73,13 @@ export default class AboutMePage extends Component<Props> {
     renderItems(dic, isShowAccount) {
         if (!dic) return null;
         let views=[];
+        const {theme} = this.params;
         for (let i in dic) {
             let title = isShowAccount ? dic[i].title + ':' + dic[i].account : dic[i].title;
 
             views.push(
                 <View key = {i}>
-                    {ViewUtil.getSettingItem(() => this.onClick(dic[i]), title, THEME_COLOR)}
+                    {ViewUtil.getSettingItem(() => this.onClick(dic[i]), title, theme.themeColor)}
                     <View style={GlobalStyles.line}/>
                 </View>
             )

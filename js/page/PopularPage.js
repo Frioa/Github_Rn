@@ -33,12 +33,12 @@ class PopularPage extends Component<Props> {
 
     _genTabs() {
         const tabs = {};
-        const {keys} = this.props;
+        const {keys, theme} = this.props;
 
         keys.forEach((item, index) => {
             if (item.checked) { // 选中情况下
                 tabs['tab' + index] = {
-                    screen: props => <PopularTabPage {...props} tabLabel={item.name}/>, // 点击Tab，传递属性（路由传递参数）
+                    screen: props => <PopularTabPage {...props} tabLabel={item.name} theme = {theme}/>, // 点击Tab，传递属性（路由传递参数）
                     navigationOptions: {
                         title: item.name
                     }
@@ -49,15 +49,15 @@ class PopularPage extends Component<Props> {
     }
 
     render() {
-        const {keys} = this.props;
+        const {keys, theme} = this.props;
         let statusBar = {
-            backgroundColor: THEME_COLOR,
+            backgroundColor: theme.themeColor,
             barStyle: 'light-content',
         };
         let navigationBar = <NavigationBar
             title={'最热'}
             statusBar={statusBar}
-            style={{backgroundColor: THEME_COLOR}}
+            style={theme.styles.navBar}
         />;
         const TabNavigator = keys.length ? createAppContainer(createMaterialTopTabNavigator(
             this._genTabs(), {
@@ -66,7 +66,7 @@ class PopularPage extends Component<Props> {
                     upperCaseLabel: false, // 是否标签大写，默认 true
                     scrollEnabled: true, // 是否支持滚动， 默认false
                     style: {
-                        backgroundColor: '#678', // TabBar 的背景色
+                        backgroundColor: theme.themeColor, // TabBar 的背景色
                         height: 30, // fix 开启scrollEnabled 后再Android上初次加载闪烁问题
                     },
                     indicatorStyle: styles.indicatorStyle, // 指示器属性
@@ -85,6 +85,7 @@ class PopularPage extends Component<Props> {
 
 const mapPopularStateToProps = state => ({
     keys: state.language.keys,
+    theme: state.theme.theme
 });
 const mapPopularDispatchToProps = dispatch => ({
     onLoadLanguage: (flag) => dispatch(actions.onLoadLanguage(flag))
@@ -158,16 +159,19 @@ class PopularTab extends Component<Props> {
     }
 
     renderItem(data) {
+        const {theme} = this.props;
         const item = data.item;
         return <PopularItem
             projectModel={item}
             onSelect={(callback) => {
                 NavigationUtil.goPage({
+                    theme,
                     projectModels: item,
                     flag: FLAG_STORAGE.flag_popular,
                     callback
                 }, 'DetailPage')
             }}
+            theme = {theme}
             onFavorite={(item, isFavorite) => FavoriteUtil.onFavorite(favoriteDao, item, isFavorite, FLAG_STORAGE.flag_popular)}
         />
     }
@@ -183,7 +187,7 @@ class PopularTab extends Component<Props> {
     }
 
     render() {
-        const {popular} = this.props;
+        const {theme} = this.props;
         let store = this._store();
         return (
             <View style={styles.container}>
@@ -194,11 +198,11 @@ class PopularTab extends Component<Props> {
                     refreshControl={
                         <RefreshControl
                             title={'Loading'}
-                            titleColor={'red'}
-                            colors={['red']}
+                            titleColor={theme.themeColor}
+                            colors={[theme.themeColor]}
                             refreshing={store.isLoading}
                             onRefresh={() => this.loadData(false)}
-                            tintColor={'red'}
+                            tintColor={theme.themeColor}
                         />
                     }
                     ListFooterComponent={() => this.genIndicator()}

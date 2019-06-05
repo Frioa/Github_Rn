@@ -9,7 +9,7 @@ import FavoriteDao from "../expand/dao/FavoriteDao";
 
 const TRENDING_URL = 'https://github.com/';
 type Props = {};
-const THEME_COLOR = '#678';
+
 export default class DetailPage extends Component<Props> {
     constructor(props) {
         super(props);
@@ -83,12 +83,13 @@ export default class DetailPage extends Component<Props> {
     }
     render() {
         // 防止标题过长
+        const {theme} = this.params;
         const titleLayoutStyle = this.state.title.length > 20 ? {paddingRight: 30} : null;
         let navigationBar = <NavigationBar
            leftButton={ViewUtil.getLeftBackButton(() => this.onBack())}
             title={this.state.title}
             titleLayoutStyle={titleLayoutStyle}
-            style={{backgroundColor: THEME_COLOR}}
+            style={theme.styles.navBar}
             rightButton={this.renderRightButton()}
         />;
         return (
