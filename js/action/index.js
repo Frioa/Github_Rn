@@ -3,6 +3,7 @@ import {onLoadPopularData, onLoadMorePopular, onFlushPopularFavorite} from './po
 import {onLoadMoreTrending, onLoadTrendingData, onFlushTrendingFavorite} from './trending'
 import {onLoadFavoriteData,} from './favorite'
 import {onLoadLanguage,} from './language'
+import {onSearch,onLoadMoreSearch, onSearchCancel} from './search'
 // 其他地方需要使用，只需要导入这个index
 export default {
     onThemeChange,
@@ -16,4 +17,7 @@ export default {
     onFlushPopularFavorite,
     onFlushTrendingFavorite,
     onLoadLanguage,
+    onSearch,
+    onLoadMoreSearch,
+    onSearchCancel,
 }
